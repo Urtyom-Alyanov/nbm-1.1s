@@ -1,0 +1,405 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ArticleModel {
+  author: UserModel!
+  createdAt: DateTime!
+  desc: String!
+  id: Int!
+  img: String
+  name: String!
+  updatedAt: DateTime!
+}
+
+input CasinoInput {
+  fortune: Int!
+  summ: Int!
+}
+
+type CatModel {
+  createdAt: DateTime!
+  desc: String
+  id: Int!
+  img: String
+  name: String!
+  products: [ProductModel!]
+  updatedAt: DateTime!
+}
+
+type CountryModel {
+  balance: Float!
+  createdAt: DateTime!
+  desc: String
+  id: Int!
+  img: String
+  isPublished: Boolean!
+  name: String!
+  orgs: [OrgModel!]!
+  updatedAt: DateTime!
+  user: UserModel!
+}
+
+input CreateCategory {
+  desc: String!
+  img: String!
+  name: String!
+}
+
+input CreateInputArticle {
+  img: String!
+  text: String!
+  title: String!
+}
+
+input CreateInputCountry {
+  balance: Int
+  img: String
+  isPublished: Boolean
+  onlyGov: Boolean
+  text: String
+  title: String!
+}
+
+input CreateInputOrg {
+  balance: Int
+  cId: Int!
+  img: String
+  isPublished: Boolean
+  text: String
+  title: String!
+}
+
+input CreateInputProduct {
+  catId: Int!
+  count: Int!
+  img: String!
+  isPublished: Boolean!
+  name: String!
+  oId: Int!
+  productType: Int!
+  sale: Int!
+  selfSale: Int!
+  text: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DeleteArgs {
+  password: String!
+  username: String!
+}
+
+type DualUserModel {
+  user1: UserModel!
+  user2: UserModel!
+}
+
+input EditCategory {
+  desc: String!
+  id: Int!
+  img: String!
+  name: String!
+}
+
+input EditInput {
+  desc: String
+  img: String
+  nick: String
+}
+
+input EditInputArticle {
+  id: Int!
+  img: String!
+  text: String!
+  title: String!
+}
+
+input EditInputCountry {
+  balance: Int
+  id: Int!
+  img: String
+  isPublished: Boolean
+  onlyGov: Boolean
+  text: String
+  title: String!
+}
+
+input EditInputOrg {
+  balance: Int
+  cId: Int!
+  id: Int!
+  img: String
+  isPublished: Boolean
+  text: String
+  title: String!
+}
+
+input EditInputProduct {
+  catId: Int!
+  id: Int!
+  img: String!
+  isPublished: Boolean!
+  name: String!
+  sale: Int!
+  text: String!
+}
+
+input EditPasswordInput {
+  passwordNew1: String!
+  passwordNew2: String!
+  passwordOld: String!
+}
+
+input EditUsernameInput {
+  password: String!
+  username: String!
+}
+
+type ItemArticleModel {
+  item: ArticleModel!
+}
+
+type ItemCatModel {
+  item: CatModel!
+}
+
+type ItemCountryModel {
+  item: CountryModel!
+}
+
+type ItemOrgModel {
+  item: OrgModel!
+}
+
+type ItemProductModel {
+  item: ProductModel!
+}
+
+type ItemSaleModel {
+  item: SaleModel!
+}
+
+type ItemUserModel {
+  item: UserModel!
+}
+
+input LevelInput {
+  id: Int
+  to: Int
+}
+
+type ManyArticleModel {
+  info: ManyInfoModel!
+  items: [ArticleModel!]!
+}
+
+type ManyCatModel {
+  info: ManyInfoModel!
+  items: [CatModel!]!
+}
+
+type ManyCountryModel {
+  info: ManyInfoModel!
+  items: [CountryModel!]!
+}
+
+type ManyInfoModel {
+  limit: Int!
+  page: Int!
+  summ: Int!
+}
+
+type ManyOrgModel {
+  info: ManyInfoModel!
+  items: [OrgModel!]!
+}
+
+type ManyProductModel {
+  info: ManyInfoModel!
+  items: [ProductModel!]!
+}
+
+type ManySaleModel {
+  info: ManyInfoModel!
+  items: [SaleModel!]!
+}
+
+type ManyUserModel {
+  info: ManyInfoModel!
+  items: [UserModel!]!
+}
+
+type Mutation {
+  acceptArticle(id: Float!): StatusModel!
+  acceptCountry(id: Float!): StatusModel!
+  acceptOrg(id: Float!): StatusModel!
+  acceptProduct(id: Float!): StatusModel!
+  casino(casineinput: CasinoInput!): StatusModel!
+  createArticle(CreateInputArticle: CreateInputArticle!): ItemArticleModel!
+  createCategory(createCat: CreateCategory!): ItemCatModel!
+  createCountry(createCountryArgs: CreateInputCountry!): ItemCountryModel!
+  createOrg(createOrgArgs: CreateInputOrg!): ItemOrgModel!
+  createProduct(createProductArgs: CreateInputProduct!): ItemProductModel!
+  declineArticle(id: Float!): StatusModel!
+  declineCountry(id: Float!): StatusModel!
+  declineOrg(id: Float!): StatusModel!
+  declineProduct(id: Float!): StatusModel!
+  delete(deleteUser: DeleteArgs!): StatusModel!
+  deleteArticle(id: Float!): StatusModel!
+  deleteCategory(id: Float!): ItemCatModel!
+  deleteCountry(id: Float!): StatusModel!
+  deleteOrg(id: Float!): StatusModel!
+  deleteProduct(id: Float!): StatusModel!
+  editArticle(EditInputArticle: EditInputArticle!): ItemArticleModel!
+  editCountry(editCountryArgs: EditInputCountry!): ItemCountryModel!
+  editOrg(editOrgArgs: EditInputOrg!): ItemOrgModel!
+  editPassword(updatePassword: EditPasswordInput!): ItemUserModel!
+  editProduct(editProductArgs: EditInputProduct!): ItemProductModel!
+  editUser(editUser: EditInput!): ItemUserModel!
+  editUsername(updateUsername: EditUsernameInput!): ItemUserModel!
+  giftCountry(giftCountryArgs: PayInput!): ItemCountryModel!
+  giftOrg(giftOrgArgs: PayInput!): ItemOrgModel!
+  giftUser(giftUser: PayInput!): ItemUserModel!
+  levelControl(payUser: LevelInput!): ItemUserModel!
+  payCountry(payCountryArgs: PayInput!): ItemCountryModel!
+  payOrg(payOrgArgs: PayInput!): ItemOrgModel!
+  payUser(payUser: PayInput!): DualUserModel!
+  penaltyCountry(penaltyCountryArgs: PayInput!): ItemCountryModel!
+  penaltyOrg(penaltyOrgArgs: PayInput!): StatusModel!
+  penaltyUser(penaltyUser: PayInput!): ItemUserModel!
+  productPay(payProduct: PayInput!): ItemSaleModel!
+  reg(registerInput: RegisterInput!): TokenItemUser!
+  unpayCountry(unpayCountryArgs: PayInput!): ItemCountryModel!
+  unpayOrg(unpayOrgArgs: PayInput!): ItemOrgModel!
+  updateCategory(editCat: EditCategory!): ItemCatModel!
+}
+
+type NotifyModel {
+  forId: ID!
+  img: String
+  isCool: Boolean!
+  text: String!
+  title: String!
+  typ: String!
+}
+
+type OrgModel {
+  balance: Float!
+  country: CountryModel
+  createdAt: DateTime!
+  desc: String
+  id: Int!
+  img: String
+  isPublished: Boolean!
+  name: String!
+  products: [ProductModel!]
+  updatedAt: DateTime!
+  user: UserModel!
+}
+
+input PayInput {
+  id: Int
+  summ: Int
+}
+
+type ProductModel {
+  category: CatModel
+  count: Int
+  createdAt: DateTime!
+  desc: String
+  id: Int!
+  img: String
+  isPublished: Boolean!
+  name: String!
+  org: OrgModel!
+  productType: Int!
+  sale: Int!
+  sales: [SaleModel!]!
+  selfSale: Int
+  updatedAt: DateTime!
+}
+
+type Query {
+  findAllCountry(limit: Int = 10, page: Int = 1): ManyCountryModel!
+  findAllOrg(cId: Int, limit: Int = 12, page: Int = 1, uId: Int): ManyOrgModel!
+  findAllProduct(catId: Int!, limit: Int = 10, oId: Int!, page: Int = 1): ManyProductModel!
+  findAllUser(limit: Int = 10, page: Int = 1): ManyUserModel!
+  findCountry(id: Int!, oId: Int, uId: Int): ItemCountryModel!
+  findManyCategory(limit: Int = 12, page: Int = 1): ManyCatModel!
+  findNotAcceptedArticles(limit: Int = 10, page: Int = 1, userId: Int): ManyArticleModel!
+  findNotAcceptedCountry(limit: Int = 10, page: Int = 1): ManyCountryModel!
+  findNotAcceptedOrg(cId: Int, limit: Int = 12, page: Int = 1, uId: Int): ManyOrgModel!
+  findNotAcceptedProduct(catId: Int!, limit: Int = 10, oId: Int!, page: Int = 1): ManyProductModel!
+  findOneCategory(id: Int!, pId: Int!): ItemCatModel!
+  findOneOrg(id: Int!, pId: Int): ItemOrgModel!
+  findOneProduct(id: Int!, sId: Int!): ItemProductModel!
+  findUser(articleId: Int, countryId: Int, id: Int, orgId: Int, username: String, vkId: Int): ItemUserModel!
+  getManyArticle(limit: Int = 10, page: Int = 1, userId: Int): ManyArticleModel!
+  getOneArticle(id: Int!): ItemArticleModel!
+  login(password: String, username: String, vkHash: String, vkId: Int): TokenItemUser!
+  refresh(refresh: String!): TokenItemUser!
+  saleFindAll(limit: Int = 10, page: Int = 1): ManySaleModel!
+  saleFindOne(id: Int!, pId: Int!): ItemSaleModel!
+  whoIAm: ItemUserModel!
+}
+
+input RegisterInput {
+  desc: String
+  img: String
+  nick: String
+  password: String!
+  passwordRetry: String!
+  username: String!
+  vkHash: String!
+  vkId: Int!
+}
+
+type SaleModel {
+  createdAt: DateTime!
+  desc: String
+  id: Int!
+  img: String
+  items: Float!
+  product: ProductModel!
+  updatedAt: DateTime!
+  user: UserModel!
+}
+
+type StatusModel {
+  isOk: Boolean!
+}
+
+type Subscription {
+  subEvent: NotifyModel!
+}
+
+type TokenItemUser {
+  item: UserModel!
+  token: TokenModel!
+}
+
+type TokenModel {
+  access_token: String!
+  refresh_token: String!
+}
+
+type UserModel {
+  articles: [ArticleModel!]
+  balance: Int!
+  countr: CountryModel
+  createdAt: DateTime!
+  desc: String
+  id: Int!
+  img: String
+  levelAccess: Int!
+  nick: String
+  orgs: [OrgModel!]
+  sales: [SaleModel!]
+  updatedAt: DateTime!
+  username: String!
+  vkId: Int
+}
