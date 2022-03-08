@@ -1,4 +1,4 @@
-import { ImagesEntity } from './images/images.entity';
+import { ImagesEntity } from '../images/images.entity';
 
 export const getImageUrl = (
   img?: ImagesEntity | number,

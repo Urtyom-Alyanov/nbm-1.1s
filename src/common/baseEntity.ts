@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { ImagesEntity } from '../images/images.entity';
 
-export default class Base {
+export class BaseEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
     comment: 'Индефикатор, уникальный',

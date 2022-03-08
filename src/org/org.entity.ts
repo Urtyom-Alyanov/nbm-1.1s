@@ -2,10 +2,10 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { CountryEntity } from 'src/country/country.entity';
 import { ProductEntity } from 'src/product/entities/product.entity';
 import { UserEntity } from 'src/user/user.entity';
-import Base from 'src/common/baseEntity';
+import { BaseEntity } from 'src/common/baseEntity';
 
 @Entity('orgs', {})
-export class OrgEntity extends Base {
+export class OrgEntity extends BaseEntity {
   @Column()
   name: string;
 

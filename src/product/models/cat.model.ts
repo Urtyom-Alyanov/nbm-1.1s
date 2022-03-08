@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { BaseModel } from 'src/baseModel';
-import { ManyModel, ResponseModel } from 'src/ManyModel';
+import { BaseModel } from 'src/common/baseModel';
+import { ManyModel, ResponseModel } from 'src/common/ManyModel';
 import { ProductModel } from './product.model';
 
 @ObjectType()

@@ -19,9 +19,14 @@ import { APP_GUARD } from '@nestjs/core';
 import { NotificationModule } from './notification/notification.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
+import { ConfigModule } from '@nestjs/config';
+import { ImagesEntity } from './images/images.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
     GraphQLModule.forRootAsync({
       useFactory: async (authService: AuthService) => ({
         include: [
@@ -32,6 +37,9 @@ import { AuthService } from './auth/auth.service';
           CartModule,
           CatModule,
           AppModule,
+          AuthModule,
+          NotificationModule,
+          FunnyModule,
         ],
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         context: ({ req, connection }) => ({
@@ -74,7 +82,7 @@ import { AuthService } from './auth/auth.service';
       host: process.env.DATABASE_HOST || '127.0.0.1',
       port: Number(process.env.DATABASE_PORT) || 5432,
       username: process.env.DATABASE_USERNAME || 'postgres',
-      password: process.env.DATABASE_PASSWOED || 'postgres',
+      password: process.env.DATABASE_PASSWORD || 'postgres',
       synchronize: true,
       entities: [
         UserEntity,
@@ -83,6 +91,7 @@ import { AuthService } from './auth/auth.service';
         CountryEntity,
         CartEntity,
         CatEntity,
+        ImagesEntity,
       ],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       subscribers: [__dirname + '/subscribers/**/*{.ts,.js}'],

@@ -138,18 +138,20 @@ export class UserResolver {
   @ResolveField(() => [OrgModel], { name: 'orgs' })
   async orgs(@Parent() user: UserModel): Promise<OrgModel[]> {
     const { id } = user;
-    return (await this.orgService.findMany({ uId: id, limit: 3 })).items;
+    return (await this.orgService.findMany({ uId: id, limit: 3, page: 1 }))
+      .items;
   }
 
   @ResolveField(() => [SaleModel], { name: 'sales' })
   async sales(@Parent() user: UserModel): Promise<SaleModel[]> {
     const { id } = user;
-    return (await this.cartService.findAllSales({ userId: id, limit: 3 }))
-      .items;
+    return (
+      await this.cartService.findAllSales({ userId: id, limit: 3, page: 1 })
+    ).items;
   }
 
-  @ResolveField(() => CountryModel, { name: 'countr' })
-  async countr(@Parent() user: UserModel): Promise<CountryModel> {
+  @ResolveField(() => CountryModel, { name: 'countr', nullable: true })
+  async countr(@Parent() user: UserModel): Promise<CountryModel | null> {
     const { id } = user;
     try {
       return (await this.countryService.findOne({ uId: id })).item;

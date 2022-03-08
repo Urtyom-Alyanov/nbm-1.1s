@@ -16,6 +16,7 @@ import { DualUserModel, ItemUserModel, ManyUserModel } from './user.model';
 import { ImagesService } from 'src/images/images.service';
 import { FindOneArgs } from './dto/findOne.dto';
 import { IResponseModel } from 'src/common/ManyModel';
+import { getImageUrl } from 'src/common/getImageUrl';
 
 @Injectable()
 export class UserService {
@@ -43,7 +44,7 @@ export class UserService {
     username,
     cartId,
   }: FindOneArgs): Promise<IResponseModel<UserEntity>> {
-    let where: FindConditions<UserEntity>;
+    let where: FindConditions<UserEntity> = {};
     if (orgId) where = { ...where, orgs: [{ id: orgId }] };
     if (cartId) where = { ...where, sales: [{ id: cartId }] };
     if (id) where = { ...where, id };
@@ -141,7 +142,7 @@ export class UserService {
       }! Размер пополнения ${summ}!`,
       isCool: true,
       typ: 'pay',
-      img: `/api/images/${user.img.id}`,
+      img: getImageUrl(user.img),
     });
     await this.usersRepository.save([item, user]);
     return { user1: user, user2: item };
@@ -151,7 +152,7 @@ export class UserService {
     user: UserEntity,
     { desc, imgId, nick }: { desc?: string; imgId?: number; nick?: string },
   ): Promise<ItemUserModel> {
-    user.img = await this.imagesService.getById(imgId);
+    if (imgId) user.img = await this.imagesService.getById(imgId);
     user.nick = nick;
     user.desc = desc;
     await this.usersRepository.save(user);
@@ -174,7 +175,7 @@ export class UserService {
 
   async updateUsername(
     user: UserEntity,
-    { username, password }: { username?: string; password?: string },
+    { username, password }: { username: string; password: string },
   ): Promise<ItemUserModel> {
     if (!(await compare(password, user.password)))
       throw new HttpException('Неверный старый пароль', HttpStatus.BAD_REQUEST);

@@ -6,10 +6,10 @@ import { ACCESS_TOKEN } from './consts';
 
 const fromAuthHeaderAsBearerToken = (): JwtFromRequestFunction => (req) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) return;
+  if (!authHeader) return '';
   if (authHeader.split(' ')[1] && authHeader.split(' ')[0] === 'Bearer')
     return authHeader.split(' ')[1];
-  return;
+  return '';
 };
 const fromCookies =
   (name: string): JwtFromRequestFunction =>

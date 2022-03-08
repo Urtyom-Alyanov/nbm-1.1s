@@ -7,7 +7,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { StatusModel } from 'src/common/others.model';
-import { ForAuth } from 'src/user/auth.guard';
+import { ForAuth } from 'src/auth/auth.guard';
 import { FindAllArgs as FindAll } from 'src/user/dto/findAll.dto';
 import { CatService } from './cat.service';
 import { CreateCategory, EditCategory, FindOneCat } from './dto/category';

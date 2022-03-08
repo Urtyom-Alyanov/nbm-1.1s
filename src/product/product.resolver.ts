@@ -112,8 +112,13 @@ export class ProductResolver {
 
   @ResolveField(() => [SaleModel])
   async sales(@Parent() product: ProductModel): Promise<SaleModel[]> {
-    return (await this.cartService.findAllSales({ productId: product.id }))
-      .items;
+    return (
+      await this.cartService.findAllSales({
+        productId: product.id,
+        page: 1,
+        limit: 3,
+      })
+    ).items;
   }
 
   @ResolveField(() => OrgModel)

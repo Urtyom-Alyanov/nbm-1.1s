@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { ProductEntity } from './product.entity';
-import Base from 'src/common/baseEntity';
+import { BaseEntity } from 'src/common/baseEntity';
 
 @Entity('categories', {})
-export class CatEntity extends Base {
+export class CatEntity extends BaseEntity {
   @Column()
   name: string;
 

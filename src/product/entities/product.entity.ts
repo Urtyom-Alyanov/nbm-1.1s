@@ -10,11 +10,11 @@ import {
 } from 'typeorm';
 import { CatEntity } from 'src/product/entities/cat.entity';
 import { OrgEntity } from 'src/org/org.entity';
-import Base from 'src/common/baseEntity';
+import { BaseEntity as BasedEntity } from 'src/common/baseEntity';
 import { UserEntity } from 'src/user/user.entity';
 
 @Entity('products', {})
-export class ProductEntity extends Base {
+export class ProductEntity extends BasedEntity {
   @Column()
   name: string;
 

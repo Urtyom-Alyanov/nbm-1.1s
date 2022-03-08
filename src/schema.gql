@@ -2,16 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ArticleModel {
-  author: UserModel!
-  createdAt: DateTime!
-  desc: String!
-  id: Int!
-  img: String
-  name: String!
-  updatedAt: DateTime!
-}
-
 input CasinoInput {
   fortune: Int!
   summ: Int!
@@ -20,8 +10,8 @@ input CasinoInput {
 type CatModel {
   createdAt: DateTime!
   desc: String
-  id: Int!
-  img: String
+  id: ID!
+  img: ID
   name: String!
   products: [ProductModel!]
   updatedAt: DateTime!
@@ -31,10 +21,11 @@ type CountryModel {
   balance: Float!
   createdAt: DateTime!
   desc: String
-  id: Int!
-  img: String
+  id: ID!
+  img: ID
   isPublished: Boolean!
   name: String!
+  onlyGov: Boolean!
   orgs: [OrgModel!]!
   updatedAt: DateTime!
   user: UserModel!
@@ -42,19 +33,12 @@ type CountryModel {
 
 input CreateCategory {
   desc: String!
-  img: String!
   name: String!
-}
-
-input CreateInputArticle {
-  img: String!
-  text: String!
-  title: String!
 }
 
 input CreateInputCountry {
   balance: Int
-  img: String
+  imgId: Float
   isPublished: Boolean
   onlyGov: Boolean
   text: String
@@ -64,7 +48,7 @@ input CreateInputCountry {
 input CreateInputOrg {
   balance: Int
   cId: Int!
-  img: String
+  imgId: Float
   isPublished: Boolean
   text: String
   title: String!
@@ -73,7 +57,7 @@ input CreateInputOrg {
 input CreateInputProduct {
   catId: Int!
   count: Int!
-  img: String!
+  imgId: Int!
   isPublished: Boolean!
   name: String!
   oId: Int!
@@ -101,7 +85,6 @@ type DualUserModel {
 input EditCategory {
   desc: String!
   id: Int!
-  img: String!
   name: String!
 }
 
@@ -111,17 +94,10 @@ input EditInput {
   nick: String
 }
 
-input EditInputArticle {
-  id: Int!
-  img: String!
-  text: String!
-  title: String!
-}
-
 input EditInputCountry {
   balance: Int
   id: Int!
-  img: String
+  imgId: Float
   isPublished: Boolean
   onlyGov: Boolean
   text: String
@@ -132,7 +108,7 @@ input EditInputOrg {
   balance: Int
   cId: Int!
   id: Int!
-  img: String
+  imgId: Float
   isPublished: Boolean
   text: String
   title: String!
@@ -141,7 +117,7 @@ input EditInputOrg {
 input EditInputProduct {
   catId: Int!
   id: Int!
-  img: String!
+  imgId: Int!
   isPublished: Boolean!
   name: String!
   sale: Int!
@@ -159,52 +135,19 @@ input EditUsernameInput {
   username: String!
 }
 
-type ItemArticleModel {
-  item: ArticleModel!
-}
-
-type ItemCatModel {
-  item: CatModel!
-}
-
-type ItemCountryModel {
-  item: CountryModel!
-}
-
-type ItemOrgModel {
-  item: OrgModel!
-}
-
-type ItemProductModel {
-  item: ProductModel!
-}
-
-type ItemSaleModel {
-  item: SaleModel!
-}
-
-type ItemUserModel {
-  item: UserModel!
-}
-
 input LevelInput {
   id: Int
   to: Int
 }
 
-type ManyArticleModel {
+type ManyCatModelModel {
   info: ManyInfoModel!
-  items: [ArticleModel!]!
+  items: [CatModel]!
 }
 
-type ManyCatModel {
+type ManyCountryModelModel {
   info: ManyInfoModel!
-  items: [CatModel!]!
-}
-
-type ManyCountryModel {
-  info: ManyInfoModel!
-  items: [CountryModel!]!
+  items: [CountryModel]!
 }
 
 type ManyInfoModel {
@@ -213,69 +156,65 @@ type ManyInfoModel {
   summ: Int!
 }
 
-type ManyOrgModel {
+type ManyOrgModelModel {
   info: ManyInfoModel!
-  items: [OrgModel!]!
+  items: [OrgModel]!
 }
 
-type ManyProductModel {
+type ManyProductModelModel {
   info: ManyInfoModel!
-  items: [ProductModel!]!
+  items: [ProductModel]!
 }
 
-type ManySaleModel {
+type ManySaleModelModel {
   info: ManyInfoModel!
-  items: [SaleModel!]!
+  items: [SaleModel]!
 }
 
-type ManyUserModel {
+type ManyUserModelModel {
   info: ManyInfoModel!
-  items: [UserModel!]!
+  items: [UserModel]!
 }
 
 type Mutation {
-  acceptArticle(id: Float!): StatusModel!
   acceptCountry(id: Float!): StatusModel!
   acceptOrg(id: Float!): StatusModel!
   acceptProduct(id: Float!): StatusModel!
-  casino(casineinput: CasinoInput!): StatusModel!
-  createArticle(CreateInputArticle: CreateInputArticle!): ItemArticleModel!
-  createCategory(createCat: CreateCategory!): ItemCatModel!
-  createCountry(createCountryArgs: CreateInputCountry!): ItemCountryModel!
-  createOrg(createOrgArgs: CreateInputOrg!): ItemOrgModel!
-  createProduct(createProductArgs: CreateInputProduct!): ItemProductModel!
-  declineArticle(id: Float!): StatusModel!
+  casino(casinoinput: CasinoInput!): StatusModel!
+  createCategory(createCat: CreateCategory!): ReponseCatModelModel!
+  createCountry(createCountryArgs: CreateInputCountry!): ReponseCountryModelModel!
+  createOrg(createOrgArgs: CreateInputOrg!): ReponseOrgModelModel!
+  createProduct(createProductArgs: CreateInputProduct!): ReponseProductModelModel!
   declineCountry(id: Float!): StatusModel!
   declineOrg(id: Float!): StatusModel!
   declineProduct(id: Float!): StatusModel!
   delete(deleteUser: DeleteArgs!): StatusModel!
-  deleteArticle(id: Float!): StatusModel!
-  deleteCategory(id: Float!): ItemCatModel!
+  deleteAuthCookies: StatusModel!
+  deleteCategory(id: Float!): ReponseCatModelModel!
   deleteCountry(id: Float!): StatusModel!
   deleteOrg(id: Float!): StatusModel!
   deleteProduct(id: Float!): StatusModel!
-  editArticle(EditInputArticle: EditInputArticle!): ItemArticleModel!
-  editCountry(editCountryArgs: EditInputCountry!): ItemCountryModel!
-  editOrg(editOrgArgs: EditInputOrg!): ItemOrgModel!
-  editPassword(updatePassword: EditPasswordInput!): ItemUserModel!
-  editProduct(editProductArgs: EditInputProduct!): ItemProductModel!
-  editUser(editUser: EditInput!): ItemUserModel!
-  editUsername(updateUsername: EditUsernameInput!): ItemUserModel!
-  giftCountry(giftCountryArgs: PayInput!): ItemCountryModel!
-  giftOrg(giftOrgArgs: PayInput!): ItemOrgModel!
-  giftUser(giftUser: PayInput!): ItemUserModel!
-  levelControl(payUser: LevelInput!): ItemUserModel!
-  payCountry(payCountryArgs: PayInput!): ItemCountryModel!
-  payOrg(payOrgArgs: PayInput!): ItemOrgModel!
+  editCountry(editCountryArgs: EditInputCountry!): ReponseCountryModelModel!
+  editOrg(editOrgArgs: EditInputOrg!): ReponseOrgModelModel!
+  editPassword(updatePassword: EditPasswordInput!): ReponseUserModelModel!
+  editProduct(editProductArgs: EditInputProduct!): ReponseProductModelModel!
+  editUser(editUser: EditInput!): ReponseUserModelModel!
+  editUsername(updateUsername: EditUsernameInput!): ReponseUserModelModel!
+  giftCountry(giftCountryArgs: PayInput!): ReponseCountryModelModel!
+  giftOrg(giftOrgArgs: PayInput!): ReponseOrgModelModel!
+  giftUser(giftUser: PayInput!): ReponseUserModelModel!
+  levelControl(payUser: LevelInput!): ReponseUserModelModel!
+  payCountry(payCountryArgs: PayInput!): ReponseCountryModelModel!
+  payOrg(payOrgArgs: PayInput!): ReponseOrgModelModel!
   payUser(payUser: PayInput!): DualUserModel!
-  penaltyCountry(penaltyCountryArgs: PayInput!): ItemCountryModel!
+  penaltyCountry(penaltyCountryArgs: PayInput!): ReponseCountryModelModel!
   penaltyOrg(penaltyOrgArgs: PayInput!): StatusModel!
-  penaltyUser(penaltyUser: PayInput!): ItemUserModel!
-  productPay(payProduct: PayInput!): ItemSaleModel!
+  penaltyUser(penaltyUser: PayInput!): ReponseUserModelModel!
+  productPay(payProduct: PayInput!): ReponseSaleModelModel!
   reg(registerInput: RegisterInput!): TokenItemUser!
-  unpayCountry(unpayCountryArgs: PayInput!): ItemCountryModel!
-  unpayOrg(unpayOrgArgs: PayInput!): ItemOrgModel!
-  updateCategory(editCat: EditCategory!): ItemCatModel!
+  unpayCountry(unpayCountryArgs: PayInput!): ReponseCountryModelModel!
+  unpayOrg(unpayOrgArgs: PayInput!): ReponseOrgModelModel!
+  updateCategory(editCat: EditCategory!): ReponseCatModelModel!
 }
 
 type NotifyModel {
@@ -292,8 +231,8 @@ type OrgModel {
   country: CountryModel
   createdAt: DateTime!
   desc: String
-  id: Int!
-  img: String
+  id: ID!
+  img: ID
   isPublished: Boolean!
   name: String!
   products: [ProductModel!]
@@ -311,8 +250,8 @@ type ProductModel {
   count: Int
   createdAt: DateTime!
   desc: String
-  id: Int!
-  img: String
+  id: ID!
+  img: ID
   isPublished: Boolean!
   name: String!
   org: OrgModel!
@@ -324,31 +263,29 @@ type ProductModel {
 }
 
 type Query {
-  findAllCountry(limit: Int = 10, page: Int = 1): ManyCountryModel!
-  findAllOrg(cId: Int, limit: Int = 12, page: Int = 1, uId: Int): ManyOrgModel!
-  findAllProduct(catId: Int!, limit: Int = 10, oId: Int!, page: Int = 1): ManyProductModel!
-  findAllUser(limit: Int = 10, page: Int = 1): ManyUserModel!
-  findCountry(id: Int!, oId: Int, uId: Int): ItemCountryModel!
-  findManyCategory(limit: Int = 12, page: Int = 1): ManyCatModel!
-  findNotAcceptedArticles(limit: Int = 10, page: Int = 1, userId: Int): ManyArticleModel!
-  findNotAcceptedCountry(limit: Int = 10, page: Int = 1): ManyCountryModel!
-  findNotAcceptedOrg(cId: Int, limit: Int = 12, page: Int = 1, uId: Int): ManyOrgModel!
-  findNotAcceptedProduct(catId: Int!, limit: Int = 10, oId: Int!, page: Int = 1): ManyProductModel!
-  findOneCategory(id: Int!, pId: Int!): ItemCatModel!
-  findOneOrg(id: Int!, pId: Int): ItemOrgModel!
-  findOneProduct(id: Int!, sId: Int!): ItemProductModel!
-  findUser(articleId: Int, countryId: Int, id: Int, orgId: Int, username: String, vkId: Int): ItemUserModel!
-  getManyArticle(limit: Int = 10, page: Int = 1, userId: Int): ManyArticleModel!
-  getOneArticle(id: Int!): ItemArticleModel!
-  login(password: String, username: String, vkHash: String, vkId: Int): TokenItemUser!
-  refresh(refresh: String!): TokenItemUser!
-  saleFindAll(limit: Int = 10, page: Int = 1): ManySaleModel!
-  saleFindOne(id: Int!, pId: Int!): ItemSaleModel!
-  whoIAm: ItemUserModel!
+  findAllCountry(limit: Int = 12, page: Int = 1): ManyCountryModelModel!
+  findAllOrg(cId: Int, limit: Int = 12, page: Int = 1, uId: Int): ManyOrgModelModel!
+  findAllProduct(catId: Int!, limit: Int = 12, oId: Int!, page: Int = 1): ManyProductModelModel!
+  findAllUser(limit: Int = 12, page: Int = 1): ManyUserModelModel!
+  findCountry(id: Int, oId: Int, uId: Int): ReponseCountryModelModel!
+  findManyCategory(limit: Int = 12, page: Int = 1): ManyCatModelModel!
+  findNotAcceptedCountry(limit: Int = 12, page: Int = 1): ManyCountryModelModel!
+  findNotAcceptedOrg(cId: Int, limit: Int = 12, page: Int = 1, uId: Int): ManyOrgModelModel!
+  findNotAcceptedProduct(catId: Int!, limit: Int = 12, oId: Int!, page: Int = 1): ManyProductModelModel!
+  findOneCategory(id: Int!, pId: Int!): ReponseCatModelModel!
+  findOneOrg(id: Int!, pId: Int): ReponseOrgModelModel!
+  findOneProduct(id: Int!, sId: Int!): ReponseProductModelModel!
+  findUser(articleId: Int, countryId: Int, id: Int, orgId: Int, username: String, vkId: Int): ReponseUserModelModel!
+  login(enableCookie: Boolean, password: String, username: String, vkHash: String, vkId: Int): TokenItemUser!
+  refresh(enableCookies: Boolean!, refresh: String!): TokenItemUser!
+  saleFindAll(limit: Int = 12, page: Int = 1, productId: Int, userId: Int): ManySaleModelModel!
+  saleFindOne(id: Int!, pId: Int!): ReponseSaleModelModel!
+  whoIAm: ReponseUserModelModel!
 }
 
 input RegisterInput {
   desc: String
+  enableCookie: Boolean
   img: String
   nick: String
   password: String!
@@ -358,12 +295,36 @@ input RegisterInput {
   vkId: Int!
 }
 
+type ReponseCatModelModel {
+  item: CatModel!
+}
+
+type ReponseCountryModelModel {
+  item: CountryModel!
+}
+
+type ReponseOrgModelModel {
+  item: OrgModel!
+}
+
+type ReponseProductModelModel {
+  item: ProductModel!
+}
+
+type ReponseSaleModelModel {
+  item: SaleModel!
+}
+
+type ReponseUserModelModel {
+  item: UserModel!
+}
+
 type SaleModel {
   createdAt: DateTime!
   desc: String
-  id: Int!
-  img: String
-  items: Float!
+  id: ID!
+  img: ID
+  items: Int!
   product: ProductModel!
   updatedAt: DateTime!
   user: UserModel!
@@ -388,13 +349,12 @@ type TokenModel {
 }
 
 type UserModel {
-  articles: [ArticleModel!]
   balance: Int!
   countr: CountryModel
   createdAt: DateTime!
   desc: String
-  id: Int!
-  img: String
+  id: ID!
+  img: ID
   levelAccess: Int!
   nick: String
   orgs: [OrgModel!]

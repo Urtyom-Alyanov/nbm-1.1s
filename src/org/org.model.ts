@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { BaseModel } from 'src/baseModel';
+import { BaseModel } from 'src/common/baseModel';
 import { CountryModel } from 'src/country/country.model';
-import { ManyModel, ResponseModel } from 'src/ManyModel';
+import { ManyModel, ResponseModel } from 'src/common/ManyModel';
 import { ProductModel } from 'src/product/models/product.model';
 import { UserModel } from 'src/user/user.model';
 
