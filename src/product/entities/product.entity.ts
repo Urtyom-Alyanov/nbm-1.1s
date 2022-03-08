@@ -1,97 +1,107 @@
-import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { CatEntity } from "src/product/entities/cat.entity"
-import { OrgEntity } from "src/org/org.entity";
-import Base from "src/baseEntity";
-import { UserEntity } from "src/user/user.entity";
+import {
+  BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CatEntity } from 'src/product/entities/cat.entity';
+import { OrgEntity } from 'src/org/org.entity';
+import Base from 'src/common/baseEntity';
+import { UserEntity } from 'src/user/user.entity';
 
-@Entity("products", {})
+@Entity('products', {})
 export class ProductEntity extends Base {
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column({ width: 1 })
-    productType: number;
+  @Column({ width: 1 })
+  productType: number;
 
-    @Column({ nullable: true })
-    selfSale?: number;
-    
-    @Column()
-    sale: number;
+  @Column({ nullable: true })
+  selfSale?: number;
 
-    @Column({ nullable: true })
-    count?: number;
+  @Column()
+  sale: number;
 
-    @ManyToOne(() => CatEntity, cat => cat.products, {
-        nullable: true,
-        onDelete: "SET NULL"
-    })
-    category?: CatEntity;
+  @Column({ nullable: true })
+  count?: number;
 
-    @ManyToOne(() => OrgEntity, org => org.products, {
-        onDelete: "CASCADE"
-    })
-    org: OrgEntity;
+  @ManyToOne(() => CatEntity, (cat) => cat.products, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  category?: CatEntity;
 
-    @Column({ default: false })
-    isPublished: boolean;
+  @ManyToOne(() => OrgEntity, (org) => org.products, {
+    onDelete: 'CASCADE',
+  })
+  org: OrgEntity;
 
-    @OneToMany(() => CartEntity, sale => sale.product)
-    sales: CartEntity[];
+  @Column({ default: false })
+  isPublished: boolean;
+
+  @OneToMany(() => CartEntity, (sale) => sale.product)
+  sales: CartEntity[];
 }
 
-@Entity("saleProducts", {})
-export class CartEntity extends BaseEntity
-{
-    @PrimaryGeneratedColumn({
-        type: "int",
-        comment: "Индефикатор, уникальный",
-    })
-    id: number;
-    
-    @Column()
-    items: number;
+@Entity('saleProducts', {})
+export class CartEntity extends BaseEntity {
+  @PrimaryGeneratedColumn({
+    type: 'int',
+    comment: 'Индефикатор, уникальный',
+  })
+  id: number;
 
-    @ManyToOne(() => ProductEntity, {
-        onDelete: "CASCADE"
-    })
-    product: ProductEntity;
+  @Column()
+  items: number;
 
-    @ManyToOne(() => UserEntity, user => user.sales)
-    user: UserEntity;
+  @ManyToOne(() => ProductEntity, {
+    onDelete: 'CASCADE',
+  })
+  product: ProductEntity;
 
-    @Column({
-        type: "int",
-        nullable: false,
-        default: () => "0",
-        transformer: {
-            to: (value?: Date) => (!value ? value : Math.round(value.getTime() / 1000)),
-            from: (value?: number) => (!value ? value : new Date(value * 1000)),
-        },
-        comment: "В UNIX формате",
-    })
-    updatedAt: Date;
+  @ManyToOne(() => UserEntity, (user) => user.sales)
+  user: UserEntity;
 
-    @Column({
-        type: "int",
-        nullable: false,
-        readonly: true,
-        default: () => "0",
-        transformer: {
-            to: (value?: Date) => (!value ? value : Math.round(value.getTime() / 1000)),
-            from: (value?: number) => (!value ? value : new Date(value * 1000)),
-        },
-        comment: "В UNIX формате",
-    })
-    createdAt: Date;
+  @Column({
+    type: 'int',
+    nullable: false,
+    default: () => '0',
+    transformer: {
+      to: (value?: Date) =>
+        !value ? value : Math.round(value.getTime() / 1000),
+      from: (value?: number) => (!value ? value : new Date(value * 1000)),
+    },
+    comment: 'В UNIX формате',
+  })
+  updatedAt: Date;
 
-    @BeforeInsert()
-    createdSet() {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    };
+  @Column({
+    type: 'int',
+    nullable: false,
+    readonly: true,
+    default: () => '0',
+    transformer: {
+      to: (value?: Date) =>
+        !value ? value : Math.round(value.getTime() / 1000),
+      from: (value?: number) => (!value ? value : new Date(value * 1000)),
+    },
+    comment: 'В UNIX формате',
+  })
+  createdAt: Date;
 
-    @BeforeUpdate()
-    updatedSet() {
-        this.updatedAt = new Date();
-    };
+  @BeforeInsert()
+  createdSet() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  updatedSet() {
+    this.updatedAt = new Date();
+  }
 }

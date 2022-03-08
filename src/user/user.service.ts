@@ -4,27 +4,18 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindConditions, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-
-// DTO
-import { Register } from './dto/register.dto';
 import { FindAllArgs as FindAll } from './dto/findAll.dto';
-import { FindOneArgs as FindOne } from './dto/findOne.dto';
-import { Login } from './dto/login.dto';
 import { CountryService } from 'src/country/country.service';
-import { pubSub, pubEvent } from 'src/app.service';
-import {
-  DualUserModel,
-  ItemUserModel,
-  ManyUserModel,
-  TokenItemUser,
-} from './user.model';
+import { pubEvent } from 'src/notification/PubSub';
+import { DualUserModel, ItemUserModel, ManyUserModel } from './user.model';
+import { ImagesService } from 'src/images/images.service';
+import { FindOneArgs } from './dto/findOne.dto';
+import { IResponseModel } from 'src/common/ManyModel';
 
 @Injectable()
 export class UserService {
@@ -33,27 +24,26 @@ export class UserService {
     private countryService: CountryService,
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
-    private jwtService: JwtService,
+    private imagesService: ImagesService,
   ) {}
   async findAll({ limit, page }: FindAll): Promise<ManyUserModel> {
     const [items, summ] = await this.usersRepository.findAndCount({
       skip: limit * (page - 1),
       take: limit * page,
+      loadRelationIds: true,
     });
     return { items, info: { limit, summ, page } };
   }
 
   async findOne({
-    articleId,
     countryId,
     id,
     orgId,
     vkId,
     username,
     cartId,
-  }: FindOne): Promise<ItemUserModel> {
+  }: FindOneArgs): Promise<IResponseModel<UserEntity>> {
     let where: FindConditions<UserEntity>;
-    if (articleId) where = { ...where, articles: [{ id: articleId }] };
     if (orgId) where = { ...where, orgs: [{ id: orgId }] };
     if (cartId) where = { ...where, sales: [{ id: cartId }] };
     if (id) where = { ...where, id };
@@ -70,70 +60,6 @@ export class UserService {
     });
     if (!item)
       throw new HttpException('Пользователь не найден', HttpStatus.BAD_REQUEST);
-    return { item };
-  }
-
-  async login({
-    vkId,
-    vkHash,
-    username,
-    password,
-  }: Login): Promise<TokenItemUser> {
-    let item: UserEntity;
-    if (vkId && vkHash)
-      item = await this.usersRepository.findOne({ where: { vkId } });
-    if (username)
-      item = await this.usersRepository.findOne({
-        where: { username: username },
-      });
-    if (!(vkId && vkHash) && item)
-      if (!(await compare(password, item.password))) item = undefined;
-    if (!item)
-      throw new HttpException(
-        'Пароль и/или логин не верны',
-        HttpStatus.BAD_REQUEST,
-      );
-    return { item, token: this.createTokens(item.id) };
-  }
-
-  async reg({
-    username,
-    vkId,
-    password,
-    ...data
-  }: Register): Promise<TokenItemUser> {
-    if (
-      (await this.usersRepository.findOne({ where: { username } })) ||
-      (await this.usersRepository.findOne({ where: { vkId } }))
-    )
-      throw new HttpException(
-        'Такой пользователь уже есть, выполните от его имени вход',
-        HttpStatus.BAD_REQUEST,
-      );
-    const passwordH = await hash(password, 10);
-    const item = this.usersRepository.create({
-      password: passwordH,
-      ...data,
-      username,
-      vkId,
-    });
-    await this.usersRepository.save(item);
-    return { item, token: this.createTokens(item.id) };
-  }
-
-  async refresh(refresh: string): Promise<TokenItemUser> {
-    const object = this.jwtService.verify(refresh);
-    if (object.typ !== 'refresh')
-      throw new UnauthorizedException('Неверный тип токена');
-    const { item } = await this.findOne({ id: object.uId });
-    return { item, token: this.createTokens(object.uId) };
-  }
-
-  async getFromToken(access: string) {
-    const object = this.jwtService.verify(access);
-    if (object.typ !== 'access')
-      throw new UnauthorizedException('Неверный тип токена');
-    const item = await this.usersRepository.findOne(object.uId);
     return { item };
   }
 
@@ -215,7 +141,7 @@ export class UserService {
       }! Размер пополнения ${summ}!`,
       isCool: true,
       typ: 'pay',
-      img: user.img,
+      img: `/api/images/${user.img.id}`,
     });
     await this.usersRepository.save([item, user]);
     return { user1: user, user2: item };
@@ -223,9 +149,9 @@ export class UserService {
 
   async update(
     user: UserEntity,
-    { desc, img, nick }: { desc?: string; img?: string; nick?: string },
+    { desc, imgId, nick }: { desc?: string; imgId?: number; nick?: string },
   ): Promise<ItemUserModel> {
-    user.img = img;
+    user.img = await this.imagesService.getById(imgId);
     user.nick = nick;
     user.desc = desc;
     await this.usersRepository.save(user);
@@ -273,6 +199,7 @@ export class UserService {
     await this.usersRepository.save(item);
     return { item };
   }
+
   async penalty(
     user: UserEntity,
     { summ, id }: { summ: number; id: number },
@@ -288,28 +215,6 @@ export class UserService {
       typ: 'pay',
     });
     return { item };
-  }
-
-  validateToken(token: string) {
-    try {
-      const item = this.jwtService.verify(token);
-      return { item, status: true };
-    } catch (e) {
-      return { item: e, status: false };
-    }
-  }
-
-  createTokens(id: number) {
-    return {
-      access_token: this.jwtService.sign(
-        { uId: id, typ: 'access' },
-        { expiresIn: '30m' },
-      ),
-      refresh_token: this.jwtService.sign(
-        { uId: id, typ: 'refresh' },
-        { expiresIn: '30d' },
-      ),
-    };
   }
 
   async save(user: UserEntity[]) {

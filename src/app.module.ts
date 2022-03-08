@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { AppService } from './app.service';
-import { ArticleEntity } from './article/article.entity';
-import { ArticleModule } from './article/article.module';
 import { CountryEntity } from './country/country.entity';
 import { CountryModule } from './country/country.module';
 import { OrgEntity } from './org/org.entity';
@@ -16,15 +13,18 @@ import { CartEntity, ProductEntity } from './product/entities/product.entity';
 import { ProductModule } from './product/product.module';
 import { UserEntity } from './user/user.entity';
 import { UserModule } from './user/user.module';
-import { AppResolver } from './app.resolver';
-import { UserService } from './user/user.service';
+import { FunnyModule } from './funny/funny.module';
+import { JwtAuthGuard, LevelGuard } from './auth/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { NotificationModule } from './notification/notification.module';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
     GraphQLModule.forRootAsync({
-      useFactory: async (userService: UserService) => ({
+      useFactory: async (authService: AuthService) => ({
         include: [
-          ArticleModule,
           UserModule,
           ProductModule,
           OrgModule,
@@ -52,7 +52,7 @@ import { UserService } from './user/user.service';
                 context = {
                   ...context,
                   user: (
-                    await userService.getFromToken(
+                    await authService.getFromToken(
                       connectionParams.Authorization.split(' ')[1],
                     )
                   ).item,
@@ -65,8 +65,8 @@ import { UserService } from './user/user.service';
           },
         },
       }),
-      imports: [UserModule],
-      inject: [UserService],
+      imports: [AuthModule],
+      inject: [AuthService],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -78,7 +78,6 @@ import { UserService } from './user/user.service';
       synchronize: true,
       entities: [
         UserEntity,
-        ArticleEntity,
         ProductEntity,
         OrgEntity,
         CountryEntity,
@@ -89,14 +88,25 @@ import { UserService } from './user/user.service';
       subscribers: [__dirname + '/subscribers/**/*{.ts,.js}'],
       migrationsTableName: 'migration_table',
     }),
-    ArticleModule,
     UserModule,
     ProductModule,
     OrgModule,
     CountryModule,
     CartModule,
     CatModule,
+    FunnyModule,
+    NotificationModule,
+    AuthModule,
   ],
-  providers: [AppService, AppResolver],
+  providers: [
+    {
+      useClass: LevelGuard,
+      provide: APP_GUARD,
+    },
+    {
+      useClass: JwtAuthGuard,
+      provide: APP_GUARD,
+    },
+  ],
 })
 export class AppModule {}

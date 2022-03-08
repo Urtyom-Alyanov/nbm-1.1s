@@ -1,52 +1,32 @@
-import { Field, ObjectType, Int } from "@nestjs/graphql";
-import { ArticleModel } from "src/article/article.model";
-import { CountryModel } from "src/country/country.model";
-import { OrgModel } from "src/org/org.model";
-import { ManyModelClass } from "src/others.model";
-import { SaleModel } from "src/product/models/product.model";
+import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { BaseModel } from 'src/common/baseModel';
+import { CountryModel } from 'src/country/country.model';
+import { ManyModel, ResponseModel } from 'src/common/ManyModel';
+import { OrgModel } from 'src/org/org.model';
+import { SaleModel } from 'src/product/models/product.model';
 
 @ObjectType()
-export class UserModel {
-    @Field(() => Int) id: number;
-    @Field(() => String) username: string;
-    @Field(() => String, { nullable: true }) nick?: string;
-    @Field(() => Int) balance: number;
-    @Field(() => String, { nullable: true }) img?: string;
-    @Field(() => String, { nullable: true }) desc?: string;
-    @Field(() => Int) levelAccess: number;
-    @Field(() => Int, { nullable: process.env.NODE_ENV !== "production" }) vkId: number;
-    @Field() updatedAt: Date;
-    @Field() createdAt: Date;
+export class UserModel extends BaseModel {
+  @Field(() => String) username: string;
+  @Field(() => String, { nullable: true }) nick?: string;
+  @Field(() => Int) balance: number;
+  @Field(() => Int) levelAccess: number;
+  @Field(() => Int, { nullable: process.env.NODE_ENV !== 'production' })
+  vkId: number;
 
-    @Field(() => [ArticleModel], { nullable: true }) articles?: ArticleModel[];
-    @Field(() => [SaleModel], { nullable: true }) sales?: SaleModel[];
-    @Field(() => CountryModel, { nullable: true }) countr?: CountryModel;
-    @Field(() => [OrgModel], { nullable: true }) orgs?: OrgModel[]
-};
+  @Field(() => [SaleModel], { nullable: true }) sales?: SaleModel[];
+  @Field(() => CountryModel, { nullable: true }) countr?: CountryModel;
+  @Field(() => [OrgModel], { nullable: true }) orgs?: OrgModel[];
+}
 
-@ObjectType()
-export class TokenModel {
-    @Field(() => String) access_token: string;
-    @Field(() => String) refresh_token: string;
-};
+export const ManyUserModel = ManyModel(UserModel);
+export type ManyUserModel = InstanceType<typeof ManyUserModel>;
 
-@ObjectType()
-export class ManyUserModel extends ManyModelClass {
-    @Field(() => [UserModel]) items: UserModel[];
-};
-@ObjectType()
-export class ItemUserModel {
-    @Field(() => UserModel) item: UserModel;
-};
+export const ItemUserModel = ResponseModel(UserModel);
+export type ItemUserModel = InstanceType<typeof ItemUserModel>;
 
 @ObjectType()
 export class DualUserModel {
-    @Field(() => UserModel) user1: UserModel;
-    @Field(() => UserModel) user2: UserModel;
-};
-
-@ObjectType()
-export class TokenItemUser extends ItemUserModel {
-    @Field(() => TokenModel)
-    token: TokenModel;
-};
+  @Field(() => UserModel) user1: UserModel;
+  @Field(() => UserModel) user2: UserModel;
+}

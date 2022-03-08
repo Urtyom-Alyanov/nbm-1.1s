@@ -1,7 +1,8 @@
 import { ExtractJwt, Strategy, JwtFromRequestFunction } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from 'src/user/user.service';
+import { ACCESS_TOKEN } from './consts';
 
 const fromAuthHeaderAsBearerToken = (): JwtFromRequestFunction => (req) => {
   const authHeader = req.headers.authorization;
@@ -10,14 +11,19 @@ const fromAuthHeaderAsBearerToken = (): JwtFromRequestFunction => (req) => {
     return authHeader.split(' ')[1];
   return;
 };
+const fromCookies =
+  (name: string): JwtFromRequestFunction =>
+  (req) => {
+    return req.cookies[name];
+  };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        //ExtractJwt.fromAuthHeaderAsBearerToken(),
         fromAuthHeaderAsBearerToken(),
+        fromCookies(ACCESS_TOKEN),
       ]),
       ignoreExpiration: false,
       secretOrKey: 'popaEremeia',

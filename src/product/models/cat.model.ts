@@ -1,24 +1,17 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { ManyModelClass } from "src/others.model";
-import { ProductModel } from "./product.model";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { BaseModel } from 'src/baseModel';
+import { ManyModel, ResponseModel } from 'src/ManyModel';
+import { ProductModel } from './product.model';
 
 @ObjectType()
-export class CatModel {
-    @Field(() => Int) id: number;
-    @Field(() => String) name: string;
-    @Field(() => String, { nullable: true }) img?: string;
-    @Field(() => String, { nullable: true }) desc?: string;
-    @Field() updatedAt: Date;
-    @Field() createdAt: Date;
+export class CatModel extends BaseModel {
+  @Field(() => String) name: string;
 
-    @Field(() => [ProductModel], { nullable: true }) products?: ProductModel[];
+  @Field(() => [ProductModel], { nullable: true }) products?: ProductModel[];
 }
 
-@ObjectType()
-export class ManyCatModel extends ManyModelClass {
-    @Field(() => [CatModel]) items: CatModel[];
-};
-@ObjectType()
-export class ItemCatModel {
-    @Field(() => CatModel) item: CatModel;
-};
+export const ManyCatModel = ManyModel(CatModel);
+export type ManyCatModel = InstanceType<typeof ManyCatModel>;
+
+export const ItemCatModel = ResponseModel(CatModel);
+export type ItemCatModel = InstanceType<typeof ItemCatModel>;

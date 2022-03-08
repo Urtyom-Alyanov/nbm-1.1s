@@ -1,28 +1,22 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { OrgModel } from "src/org/org.model";
-import { ManyModelClass } from "src/others.model";
-import { UserModel } from "src/user/user.model";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { BaseModel } from 'src/baseModel';
+import { ManyModel, ResponseModel } from 'src/ManyModel';
+import { OrgModel } from 'src/org/org.model';
+import { UserModel } from 'src/user/user.model';
 
 @ObjectType()
-export class CountryModel {
-    @Field(() => Int) id: number;
-    @Field(() => String) name: string;
-    @Field(() => String, { nullable: true }) img?: string;
-    @Field(() => String, { nullable: true }) desc?: string;
-    @Field() updatedAt: Date;
-    @Field() createdAt: Date;
-    @Field() balance: number;
-    @Field() isPublished: boolean;
+export class CountryModel extends BaseModel {
+  @Field(() => String) name: string;
+  @Field() balance: number;
+  @Field() isPublished: boolean;
+  @Field() onlyGov: boolean;
 
-    @Field(() => UserModel) user: UserModel;
-    @Field(() => [OrgModel]) orgs?: OrgModel[];
-};
+  @Field(() => UserModel) user: UserModel;
+  @Field(() => [OrgModel]) orgs?: OrgModel[];
+}
 
-@ObjectType()
-export class ManyCountryModel extends ManyModelClass {
-    @Field(() => [CountryModel]) items: CountryModel[];
-};
-@ObjectType()
-export class ItemCountryModel {
-    @Field(() => CountryModel) item: CountryModel;
-};
+export const ManyCountryModel = ManyModel(CountryModel);
+export type ManyCountryModel = InstanceType<typeof ManyCountryModel>;
+
+export const ItemCountryModel = ResponseModel(CountryModel);
+export type ItemCountryModel = InstanceType<typeof ItemCountryModel>;

@@ -5,10 +5,16 @@ import { CountryEntity } from './country.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrgModule } from 'src/org/org.module';
 import { UserModule } from 'src/user/user.module';
+import { ImagesModule } from 'src/images/images.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([CountryEntity]), forwardRef(() => OrgModule), forwardRef(() => UserModule)],
-    providers: [CountryResolver, CountryService],
-    exports: [CountryService]
+  imports: [
+    TypeOrmModule.forFeature([CountryEntity]),
+    forwardRef(() => OrgModule),
+    forwardRef(() => UserModule),
+    ImagesModule,
+  ],
+  providers: [CountryResolver, CountryService],
+  exports: [CountryService],
 })
 export class CountryModule {}

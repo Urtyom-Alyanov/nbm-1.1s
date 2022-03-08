@@ -20,7 +20,7 @@ export class CreateInputOrg {
     @IsOptional()
     @Field({nullable: true})
     @IsString()
-    img?: string;
+    imgId?: number;
 
     @IsOptional()
     @Field(() => Int, {nullable: true})

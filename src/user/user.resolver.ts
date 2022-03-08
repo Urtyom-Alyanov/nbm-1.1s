@@ -7,27 +7,20 @@ import {
   Resolver,
   Context,
 } from '@nestjs/graphql';
-import { ArticleService } from 'src/article/article.service';
 import { CountryService } from 'src/country/country.service';
 import { OrgService } from 'src/org/org.service';
 import {
   DualUserModel,
   ItemUserModel,
   ManyUserModel,
-  TokenItemUser,
   UserModel,
 } from './user.model';
 import { UserService } from './user.service';
-import { Request, Response } from 'express';
 import { FindAllArgs } from './dto/args/findAll.arg';
-import { LoginArgs } from './dto/args/login.arg';
-import { RegisterInput } from './dto/args/reg.input';
 import { FindOneArgs } from './dto/args/findOne';
-import { ArticleModel } from 'src/article/article.model';
-import { ForAuth } from './auth.guard';
-import { CurUser } from './curuser.dec';
+import { ForAuth } from '../auth/auth.guard';
 import { UserEntity } from './user.entity';
-import { PayInput, StatusModel } from 'src/others.model';
+import { PayInput, StatusModel } from 'src/common/others.model';
 import { DeleteArgs } from './dto/args/delete.input';
 import {
   EditInput,
@@ -39,12 +32,12 @@ import { SaleModel } from 'src/product/models/product.model';
 import { CountryModel } from 'src/country/country.model';
 import { OrgModel } from 'src/org/org.model';
 import { CartService } from 'src/product/cart.service';
+import { CurUser } from 'src/auth/curuser.dec';
 
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(
     private userService: UserService,
-    private articleService: ArticleService,
     private cartService: CartService,
     private orgService: OrgService,
     private countryService: CountryService,
@@ -61,33 +54,6 @@ export class UserResolver {
   @Query(() => ItemUserModel)
   async findUser(@Args() args: FindOneArgs): Promise<ItemUserModel> {
     return await this.userService.findOne(args);
-  }
-
-  @Query(() => TokenItemUser)
-  async login(@Args() args: LoginArgs): Promise<TokenItemUser> {
-    const resp = await this.userService.login(args);
-    return resp;
-  }
-
-  @Query(() => TokenItemUser)
-  async refresh(@Args('refresh') refresh: string): Promise<TokenItemUser> {
-    const resp = await this.userService.refresh(refresh);
-    return resp;
-  }
-
-  @Query(() => ItemUserModel)
-  @ForAuth()
-  async whoIAm(@CurUser() me: UserModel) {
-    return { item: me };
-  }
-
-  // Мутации
-  @Mutation(() => TokenItemUser)
-  async reg(
-    @Args('registerInput') registerInput: RegisterInput,
-  ): Promise<TokenItemUser> {
-    const resp = await this.userService.reg(registerInput);
-    return resp;
   }
 
   @ForAuth()
@@ -172,13 +138,14 @@ export class UserResolver {
   @ResolveField(() => [OrgModel], { name: 'orgs' })
   async orgs(@Parent() user: UserModel): Promise<OrgModel[]> {
     const { id } = user;
-    return (await this.orgService.findMany({ uId: id, limit: 2 })).items;
+    return (await this.orgService.findMany({ uId: id, limit: 3 })).items;
   }
 
   @ResolveField(() => [SaleModel], { name: 'sales' })
   async sales(@Parent() user: UserModel): Promise<SaleModel[]> {
     const { id } = user;
-    return (await this.cartService.findAllSales({ userId: id, limit: 2 })).items;
+    return (await this.cartService.findAllSales({ userId: id, limit: 3 }))
+      .items;
   }
 
   @ResolveField(() => CountryModel, { name: 'countr' })
@@ -189,11 +156,5 @@ export class UserResolver {
     } catch (e) {
       return null;
     }
-  }
-
-  @ResolveField(() => [ArticleModel], { name: 'articles' })
-  async articles(@Parent() user: UserModel): Promise<ArticleModel[]> {
-    const { id } = user;
-    return (await this.articleService.getArticles({ userId: id, limit: 2 })).items;
   }
 }
